@@ -27,7 +27,7 @@ std::ostream& operator<<(std::ostream& _os, const point& _p) {
 point* calculateValues(double lower, double upper, int numPoints, double (*fn)(double)) 
 {
     point* ret = new point[numPoints];
-    double step = (upper - lower) / numPoints;
+    double step = (upper - lower) / (numPoints );
     for (int i = 0;i < numPoints;i ++) 
     {
         double xCoord = lower + step * i;
@@ -69,26 +69,11 @@ std::tuple<point*, point*, point*> calculateDerivs(point* points, int numPoints)
 //     return ret;
 // }
 
-void printToFile(std::string name, point* values, point* leftDerivs, point* rightDerivs, point* midDerivs, point* realDerivs, int numPoints) {
+void printToFile(std::string name, point* values, int numPoints) {
     std::ofstream fout(name);
     for (int i = 0;i < numPoints;i ++) 
     {
-        fout << values[i].x << " " << values[i].y;
-        if(i != numPoints - 1)
-            fout << " " <<  leftDerivs[i].y;
-        else
-            fout << " -";
-
-        if(i != 0)
-            fout << " " << rightDerivs[i - 1].y;
-        else
-            fout << " -";
-        if(i != 0 && i != numPoints - 1)
-            fout << " " << midDerivs[i - 1].y;
-        else 
-            fout << " -";
-
-        fout << " " << realDerivs[i].y << ENDL;
+        fout << values[i] << ENDL;
     }
 }
 
@@ -112,11 +97,17 @@ int main() {
     point* midDerivs = std::get<2>(derivs);
 
     point* realDerivs = calculateValues(-10, 10, NUM_POINTS, calculateF2);
-    printToFile("pointdata1.out", values, leftDerivs, rightDerivs, midDerivs, realDerivs, NUM_POINTS);
+    point* realMidDerivs = calculateValues(-9.9, 10.1, NUM_POINTS, calculateF2);
+    printToFile("pointdata.out", values, NUM_POINTS);
+    printToFile("leftderivs.out", leftDerivs, NUM_POINTS - 1);
+    printToFile("rightderivs.out", rightDerivs, NUM_POINTS - 1);
+    printToFile("midderivs.out", midDerivs, NUM_POINTS - 2);
+    printToFile("realmidderivs.out", realMidDerivs, NUM_POINTS - 2);
+    printToFile("realderivs.out", realDerivs, NUM_POINTS);
 
     std::cout << calcrms(realDerivs, leftDerivs, 0, NUM_POINTS - 1) << ENDL;
     std::cout << calcrms(realDerivs, rightDerivs, 1, NUM_POINTS - 1) << ENDL;
-    std::cout << calcrms(realDerivs, midDerivs, 1, NUM_POINTS - 2) << ENDL;
+    std::cout << calcrms(realMidDerivs, midDerivs, 0, NUM_POINTS - 2) << ENDL;
 
 
 }
