@@ -30,7 +30,8 @@ struct point
  * @param t the time value
  * @return the value of the function
  */
-double calculateF(double t) {
+double calculateF(double t) 
+{
     return std::exp(-t * t);
 }
 
@@ -41,7 +42,8 @@ double calculateF(double t) {
  * @param t the time value
  * @return the derivative of the function
  */
-double calculateF2(double t) {
+double calculateF2(double t) 
+{
     return -2 * t * std::exp(-t * t);
 }
 
@@ -53,9 +55,10 @@ double calculateF2(double t) {
  * @param values the array of points
  * @param numPoints the number of points to print out
  */
-void printToFile(std::string name, point* values, int numPoints) {
+void printToFile(std::string name, point* values, int numPoints) 
+{
     std::ofstream fout(name);
-    for (int i = 0;i < numPoints;i ++) 
+    for (int i = 0; i < numPoints; i++) 
     {
         fout << values[i] << ENDL;
     }
@@ -72,9 +75,11 @@ void printToFile(std::string name, point* values, int numPoints) {
  * @param len the number of points in the approxDerivs array
  * @return the RMS error between the real and approximate derivs
  */
-double calcrms(point* realDerivs, point* approxDerivs, int offset, int len) {
+double calcrms(point* realDerivs, point* approxDerivs, int offset, int len) 
+{
     double errorsum = 0;
-    for(int i = 0;i < len;i ++) {
+    for (int i = 0; i < len; i++) 
+    {
         double diff = std::abs(realDerivs[offset + i].y * 
                                realDerivs[offset + i].y
                                - approxDerivs[i].y * approxDerivs[i].y);
@@ -94,7 +99,8 @@ double calcrms(point* realDerivs, point* approxDerivs, int offset, int len) {
  * @param p the point to print
  * @return the output stream, for method chaining
  */
-std::ostream& operator<<(std::ostream& os, const point& p) {
+std::ostream& operator<<(std::ostream& os, const point& p) 
+{
     os << p.t << ' ' << p.y;
     return os;
 }
@@ -114,7 +120,7 @@ point* calculateValues(double lower,
 {
     point* ret = new point[numPoints];
     double step = (upper - lower) / (numPoints );
-    for (int i = 0;i < numPoints;i ++) 
+    for (int i = 0; i < numPoints; i++) 
     {
         double xCoord = lower + step * i;
         double y = (*fn)(xCoord);
@@ -134,11 +140,13 @@ point* calculateValues(double lower,
  * @return a tuple containing the three derivative arrays
  */
 std::tuple<point*, point*, point*> simpleSlopeDerivs(point* points, 
-                                                     int numPoints) {
+                                                     int numPoints) 
+{
     point* leftDerivs = new point[numPoints - 1];
     point* rightDerivs = new point[numPoints - 1];
     point* midDerivs = new point[numPoints - 1];
-    for(int i = 0;i < numPoints - 1;i ++) {
+    for (int i = 0; i < numPoints - 1; i++) 
+    {
         double deriv = (points[i + 1].y - points[i].y) / 
                        (points[i + 1].t - points[i].t);
         leftDerivs[i] = {points[i].t, deriv};
@@ -157,9 +165,11 @@ std::tuple<point*, point*, point*> simpleSlopeDerivs(point* points,
  * @param numPoints the number of points in the array
  * @return an array of derivatives
  */
-point* threePointDeriv(point* points, int numPoints) {
+point* threePointDeriv(point* points, int numPoints) 
+{
     point* ret = new point[numPoints - 2];
-    for(int i = 1;i < numPoints - 1;i ++) {
+    for (int i = 1; i < numPoints - 1; i++) 
+    {
         double deriv = (points[i + 1].y - points[i - 1].y) / 
                        (points[i + 1].t - points[i - 1].t);
         ret[i - 1] = {(points[i - 1].t + points[i + 1].t) / 2, deriv};
@@ -177,7 +187,8 @@ point* threePointDeriv(point* points, int numPoints) {
  * @param p3 the third point
  * @return a pair with two values, which are the quadratic and linear term.
  */
-std::pair<double, double> calcParabolaCoeffs(point p1, point p2, point p3) {
+std::pair<double, double> calcParabolaCoeffs(point p1, point p2, point p3) 
+{
     double t1 = p1.t;
     double y1 = p1.y;
     double t2 = p2.t;
@@ -200,13 +211,15 @@ std::pair<double, double> calcParabolaCoeffs(point p1, point p2, point p3) {
  * @param numPoints the number of points in the array
  * @return an array of derivatives
  */
-point* calcParabolaDerivs(point* points, int numPoints) {
+point* calcParabolaDerivs(point* points, int numPoints) 
+{
     point* ret = new point[numPoints];
-    for(int i = 0;i < numPoints;i ++) {
+    for (int i = 0; i < numPoints; i++) 
+    {
         int centerIndex = i;
-        if(centerIndex == 0)
+        if (centerIndex == 0)
             centerIndex = 1;
-        else if(centerIndex == numPoints - 1)
+        else if (centerIndex == numPoints - 1)
             centerIndex = numPoints - 2;
         
         std::pair<double, double> parabolaCoeffs = 
@@ -228,9 +241,11 @@ point* calcParabolaDerivs(point* points, int numPoints) {
  * @param numPoints the number of points in the array
  * @return an array of derivatives
  */
-point* calcFivePointDeriv(point* points, int numPoints) {
+point* calcFivePointDeriv(point* points, int numPoints) 
+{
     point* ret = new point[numPoints - 4];
-    for(int i = 2;i < numPoints - 2;i ++) {
+    for (int i = 2; i < numPoints - 2; i++) 
+    {
         double derivative = (-points[i + 2].y + 
                              8 * points[i + 1].y - 
                              8 * points[i - 1].y + 
@@ -245,7 +260,8 @@ point* calcFivePointDeriv(point* points, int numPoints) {
 /**
  * Calculates simple slope derivatives and prints out the RMS error.
  */
-void runSimpleSlopeDeriv() {
+void runSimpleSlopeDeriv() 
+{
     point* values = calculateValues(-10, 10, NUM_POINTS, calculateF);
     std::tuple<point*, point*, point*> derivs = simpleSlopeDerivs(values, 
                                                                   NUM_POINTS);
@@ -270,7 +286,8 @@ void runSimpleSlopeDeriv() {
 /**
  * Calculates the three point derivative and prints the RMS error
  */ 
-void runThreePointDeriv() {
+void runThreePointDeriv() 
+{
     point* values = calculateValues(-10, 10, NUM_POINTS, calculateF);
     point* threePtDerivs = threePointDeriv(values, NUM_POINTS);
     point* realDerivs = calculateValues(-10, 10, NUM_POINTS, calculateF2);
@@ -283,7 +300,8 @@ void runThreePointDeriv() {
 /**
  * Calculates parabolic approximation derivative and prints the RMS error
  */
-void runParabolaDeriv() {
+void runParabolaDeriv() 
+{
     point* values = calculateValues(-10, 10, NUM_POINTS, calculateF);
     point* parabolaDerivs = calcParabolaDerivs(values, NUM_POINTS);
     point* realDerivs = calculateValues(-10, 10, NUM_POINTS, calculateF2);
@@ -296,7 +314,8 @@ void runParabolaDeriv() {
 /**
  * Calculates the 5 point stencil derivative and prints the RMS error
  */
-void runFivePointStencil() {
+void runFivePointStencil() 
+{
     point* values = calculateValues(-10, 10, NUM_POINTS, calculateF);
     point* realDerivs = calculateValues(-10, 10, NUM_POINTS, calculateF2);
     point* fivePtDerivs = calcFivePointDeriv(values, NUM_POINTS);
@@ -307,7 +326,8 @@ void runFivePointStencil() {
 /**
  * In the main method one of the derivative procedures can be run.
  */ 
-int main() {
+int main() 
+{
     // runSimpleSlopeDeriv();
     // runThreePointDeriv();
     // runParabolaDeriv();
