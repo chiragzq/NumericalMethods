@@ -45,6 +45,7 @@ int main()
     }
     std::cout << "min:    +/-" << min << std::endl;
 
+
     float max = 1;
     while ((max * 2) / 2 != inf) 
     {

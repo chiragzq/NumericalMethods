@@ -13,7 +13,7 @@
 #include <cmath>
 
 #define ENDL "\n"
-#define NUM_POINTS 1000
+#define NUM_POINTS 115
 
 /**
  * Point struct that stores a time and y value.
@@ -23,6 +23,24 @@ struct point
     double t;
     double y;
 };
+
+/**
+ * The default c++ print function overloads the bit left shift operator, but
+ * there is no equivalent of toString in java that a custom class can override
+ * to get a nice formatted string output. In c++ the actual printing function
+ * must be override with implementation for the custom class. This function 
+ * achieves that.
+ * 
+ * @param os the output stream being printed to
+ * @param p the point to print
+ * @return the output stream, for method chaining
+ */
+std::ostream& operator<<(std::ostream& os, const point& p) 
+{
+    os << p.t << ' ' << p.y;
+    return os;
+}
+
 
 /**
  * Calculates the value of e^(-(t^2)).
@@ -86,23 +104,6 @@ double calcrms(point* realDerivs, point* approxDerivs, int offset, int len)
         errorsum += diff;
     }
     return std::sqrt(errorsum / len);
-}
-
-/**
- * The default c++ print function overloads the bit left shift operator, but
- * there is no equivalent of toString in java that a custom class can override
- * to get a nice formatted string output. In c++ the actual printing function
- * must be override with implementation for the custom class. This function 
- * achieves that.
- * 
- * @param os the output stream being printed to
- * @param p the point to print
- * @return the output stream, for method chaining
- */
-std::ostream& operator<<(std::ostream& os, const point& p) 
-{
-    os << p.t << ' ' << p.y;
-    return os;
 }
 
 /**
@@ -261,7 +262,8 @@ point* calcFivePointDeriv(point* points, int numPoints)
  * Calculates simple slope derivatives and prints out the RMS error.
  */
 void runSimpleSlopeDeriv() 
-{
+{   
+    std::cout << "Running simple slope derivative" << ENDL;
     point* values = calculateValues(-10, 10, NUM_POINTS, calculateF);
     std::tuple<point*, point*, point*> derivs = simpleSlopeDerivs(values, 
                                                                   NUM_POINTS);
@@ -270,7 +272,9 @@ void runSimpleSlopeDeriv()
     point* midDerivs = std::get<2>(derivs);
 
     point* realDerivs = calculateValues(-10, 10, NUM_POINTS, calculateF2);
-    point* realMidDerivs = calculateValues(-9.9, 10.1, NUM_POINTS, calculateF2);
+    point* realMidDerivs = calculateValues(-10 + 10.0/NUM_POINTS, 
+                                           10 + 10.0/NUM_POINTS, 
+                                           NUM_POINTS, calculateF2); // todo
     printToFile("pointdata.out", values, NUM_POINTS);
     printToFile("leftderivs.out", leftDerivs, NUM_POINTS - 1);
     printToFile("rightderivs.out", rightDerivs, NUM_POINTS - 1);
@@ -288,6 +292,7 @@ void runSimpleSlopeDeriv()
  */ 
 void runThreePointDeriv() 
 {
+    std::cout << "Running three point derivative" << ENDL;
     point* values = calculateValues(-10, 10, NUM_POINTS, calculateF);
     point* threePtDerivs = threePointDeriv(values, NUM_POINTS);
     point* realDerivs = calculateValues(-10, 10, NUM_POINTS, calculateF2);
@@ -302,6 +307,7 @@ void runThreePointDeriv()
  */
 void runParabolaDeriv() 
 {
+    std::cout << "Running parabola derivative" << ENDL;
     point* values = calculateValues(-10, 10, NUM_POINTS, calculateF);
     point* parabolaDerivs = calcParabolaDerivs(values, NUM_POINTS);
     point* realDerivs = calculateValues(-10, 10, NUM_POINTS, calculateF2);
@@ -316,6 +322,7 @@ void runParabolaDeriv()
  */
 void runFivePointStencil() 
 {
+    std::cout << "Running five point stencil derivative" << ENDL;
     point* values = calculateValues(-10, 10, NUM_POINTS, calculateF);
     point* realDerivs = calculateValues(-10, 10, NUM_POINTS, calculateF2);
     point* fivePtDerivs = calcFivePointDeriv(values, NUM_POINTS);
