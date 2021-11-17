@@ -119,6 +119,7 @@ double fivePointPartial(double (*model)(double, double*), double x, double* q, i
  * it calculates the gradient of the error function with respect to each parameter and updates
  * their value. It stops when the change in error is lower than a given threshold, or if the
  * maximum number of iterations is reached. It also implements adaptive step size using momentum.
+ * It applies weight changes on the fly as they are calculated, rather than using batch updates.
  * 
  * @param n the number of data points
  * @param numQ the number of parameters in the model function
@@ -172,7 +173,7 @@ void train(int n, int numQ, double* x, double* y, double* q, double lambda, doub
 void gaussiantest() {
 	int numPoints = 42;
 	int numQ = 4;
-	double lr = 1e-10;
+	double lr = 1e-11;
 	int iterations = 100000000;
 
     double* x = new double[numPoints];
@@ -181,7 +182,7 @@ void gaussiantest() {
 	double* q = new double[numQ];
 
 	for(int i = 0;i < numQ;i ++) {
-		q[i] = 1;
+		q[i] = 10;
 	}
 	
 	train(numPoints, numQ, x, y, q, lr, iterations, modelFunctionGaussian, 0.1);
@@ -206,7 +207,7 @@ void sinHe1Test() {
 		q[i] = 1;
 	}
 	
-	train(numPoints, numQ, x, y, q, lr, iterations, modelFunctionSin, 1e-10);
+	train(numPoints, numQ, x, y, q, lr, iterations, modelFunctionSin, 0.1);
 	// std::cout << "q0: " << q[0] << " q1: " << q[1] << " q2: " << q[2] << " q3: " << q[3] << std::endl;
 }
 
@@ -237,8 +238,9 @@ void sinMg2Test() {
  * Main method
  */
 int main() {
-	sinHe1Test();
-	sinMg2Test();
+	gaussiantest();
+	// sinHe1Test();
+	// sinMg2Test();
 }
 
 
